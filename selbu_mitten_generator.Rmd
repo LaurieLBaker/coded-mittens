@@ -1,0 +1,428 @@
+---
+title: "Not Your Grandma's Selbu Mittens"
+author: "Laurie Baker"
+date: "7/3/2022"
+output:
+  html_document:
+    self_contained: FALSE
+    toc: TRUE
+    toc_float: TRUE
+    theme: readable
+    highlight: espresso
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+## Introduction
+
+
+```{r Libraries}
+library(tidyverse)
+library(raster)
+library(kableExtra)
+library(DT)
+
+library(magick)
+
+```
+
+
+```{r, echo = FALSE}
+knitr::include_graphics(path = "https://bygumbygolly.com/wp-content/uploads/2021/01/sildra-mittens2-846x1024.jpg")
+```
+
+
+## Knitting Basics
+
+Knitting can seem overwhelming at the start. There's different types of yarn, different patterns, and then there's the stiches. There's a lot of new terminology to get used to. For this pattern we will be designing our own pair of mittens using code! We'll be constructing our mittens using the following stitches:
+
+| Abbreviation     | Description |
+| --- | ----------- |
+| K      | Knit Stitch      |
+| P   | Purl Stitch        |
+| K2P2 | Also called ribbing, this is when you knit two stiches and then purl two stitches and repeat. It makes the finished project stretchy and is useful for cuffs or the bottom of hats. |
+| K2TOG | Knit two together |
+| SSK | Slip slip knit 
+
+Need a review? Check out the excellent videos by [HappyBerry](https://www.youtube.com/c/HappyBerryKnitting) below:
+
+## Knitting Review {.tabset}
+
+### Casting on
+
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/Wd0BPAtQpNQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### The Knit Stitch
+
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/esEtUaa-Pwg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### The Purl Stitch
+
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/bbtnjHrb_Hg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Decreasing: K2TOG and SSK
+
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/ycyjtZuD7W0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+## Selbu Mittens Pattern Template
+
+Currently we have a blank pattern that we will use to design our mittens. Our goal is to generate new and interesting patterns that transform the "Blank" cells in our matrix into interesting colors.
+
+```{r plotting function}
+
+plot_chart <- function(chart){
+ggplot(chart, aes(y = as.numeric(row_num), x = as.numeric(col_num),)) +
+  geom_tile(aes(fill = color), alpha = 0.7, color = "black") +
+  labs(y = "Row",
+       x = " ") +
+  scale_x_continuous(breaks = 5, labels = "") +
+  scale_y_continuous(breaks = chart$row_num, labels = as.character(chart$row_num), position = "right") +
+  geom_text(aes(label = label),
+            label.size = 0.1) +
+    scale_fill_identity()
+}
+```
+
+```{r chart-prep}
+
+chart_prep <- function(pattern){
+pattern %>%
+  mutate(row_num = 53:1, .before = "1") %>%
+  pivot_longer(cols = !row_num, names_to = "col_num", values_to = "stitch") %>%
+  mutate(label = case_when(stitch == "K2TOG" ~ "//", 
+                           stitch == "SSK" ~ "\\\\",
+                           stitch %in% c("Blank_Thumb", "CC_Thumb") ~ "T",
+                           TRUE ~ "")) %>%
+  mutate(color = case_when(stitch == "None" ~ "#000000",
+                           stitch == "K2TOG" ~ "#FFFFFF",
+                           stitch == "SSK" ~ "#FFFFFF",
+                           stitch %in% c("Blank") ~ "#FFFFFF",
+                           stitch %in% c("C1", "C1_Thumb") ~ "#FFFFFF",
+                           stitch == "C2" ~ "#30D5C8",
+                           stitch %in% c("C3") ~ "#30D5C8",                                                stitch %in% c("C3") ~ "#FCE205",
+                           stitch %in% c("C4") ~ "#0000FF",
+                           stitch %in% c("C5") ~ "#0000FF",
+
+                           stitch == "Blank_Thumb" ~ "#FFFFFF"))
+}
+```
+
+
+```{r}
+
+template <- read_csv("template/mitten_template.csv")
+template_pattern <- chart_prep(pattern = template)
+
+
+```
+
+## Selbu Mittens Part I {.tabset}
+
+### The Template
+
+```{r, fig.width = 7, fig.height = 14}
+
+plot_chart(chart = template_pattern) +
+  scale_fill_identity(guide = "legend", labels = c("None", "Contrast Color", "Main Color", "K2Tog or SSK"), 
+                       name = "Stitch Guide")
+```
+
+### The Template Dataset
+
+```{r}
+
+template %>%
+  kbl() %>%
+  kable_styling()
+
+```
+
+
+### Pattern 1
+
+```{r}
+
+new_pattern <- template
+
+for(i in 1:nrow(new_pattern)){
+  for(j in 1:ncol(new_pattern)){
+  if(i %% 2 == 0 & j %% 3 == 0 & new_pattern[i, j] == "Blank"){
+  new_pattern[i, j - 1] <- "C1"
+  }
+  if(i %% 2 == 0 & j %% 3 == 0 & new_pattern[i, j] == "Blank_Thumb"){
+  new_pattern[i, j - 1] <- "C1_Thumb"
+  }
+  if(i %% 3 == 0 & j %% 2 == 0 & new_pattern[i, j] == "Blank"){
+  new_pattern[i, j - 1]  <- "C1"
+  }
+  if(i %% 3 == 0 & j %% 2 == 0 & new_pattern[i, j] == "Blank_Thumb"){
+  new_pattern[i, j - 1]  <- "C1_Thumb"
+  }
+  }
+}
+
+```
+
+```{r}
+
+new_chart <- chart_prep(new_pattern)
+
+```
+
+```{r, fig.width = 8, fig.height = 16}
+
+plot_chart(new_chart) +
+  scale_fill_identity(guide = "legend", labels = c("None", "Contrast Color", "Main Color", "K2Tog or SSK"), 
+                       name = "Stitch Guide")
+
+```
+
+
+### Pattern 1 Dataset
+
+```{r}
+
+new_pattern %>%
+  kbl() %>%
+  kable_styling()
+
+```
+
+
+
+## How did we do it?
+
+To generate the pattern, we set up a looping structure to go row by row and stitch by stitch, just like you'd knit!
+
+```{r, eval = FALSE, echo = TRUE}
+
+for(i in 1:nrow(template)){ # Every row
+  for(j in 1:ncol(template)){ # Every stitch
+    # Generate the pattern
+  }
+}
+```
+
+```{r, eval = FALSE}
+
+for(i in 1:nrow(template)){
+  for(j in 1:ncol(template)){
+  if(i %in% 1:2){
+  print(paste0("On row ", 
+               i, 
+               " stitch ", 
+               j, 
+               " your stitch is ", 
+               template[i,j]
+               )
+        )
+  }
+  }
+}
+
+```
+
+## Generating a random knitting pattern {.tabset}
+
+### Random Pattern
+
+```{r}
+random_pattern <- template
+
+for(i in 1:nrow(random_pattern)){
+  stitches <- sample(1:24, size = 10, replace = FALSE)
+  for(j in 1:length(stitches)){
+    if(random_pattern[i, stitches[j]] == "Blank"){
+      random_pattern[i, stitches[j]] <- "C1"
+    }
+    if(random_pattern[i, stitches[j]] == "Blank_Thumb"){
+      random_pattern[i, stitches[j]] <- "C1_Thumb"
+    }
+  }
+}
+```
+
+```{r}
+random_chart <- chart_prep(random_pattern)
+```
+
+
+```{r}
+
+random_chart2 <- chart_prep(random_pattern) %>%
+  mutate(col_num = abs(as.numeric(col_num)-24)) %>%
+  mutate(label = case_when(stitch == "K2TOG" ~ "\\\\", 
+                           stitch == "SSK" ~ "//",
+                           stitch %in% c("Blank_Thumb", "C1_Thumb") ~ "T",
+                           TRUE ~ "")) 
+  
+```
+
+
+```{r, fig.width = 4, fig.height = 8, fig.show="hold"}
+
+plot_chart(random_chart) +
+  labs(title = "Left Mitten")
+
+
+plot_chart(random_chart2) +
+  labs(title = "Right Mitten")
+
+```
+
+### Random Dataset
+
+```{r, eval = TRUE}
+
+random_pattern %>%
+  kbl() %>%
+  kable_styling()
+
+```
+
+### Code Used
+
+```{r, eval = FALSE, echo = TRUE}
+
+for(i in 1:nrow(random_pattern)){
+  stitches <- sample(1:24, size = 10, replace = FALSE)
+  for(j in 1:length(stitches)){
+    if(random_pattern[i, stitches[j]] == "Blank"){
+      random_pattern[i, stitches[j]] <- "C1"
+    }
+    if(random_pattern[i, stitches[j]] == "Blank_Thumb"){
+      random_pattern[i, stitches[j]] <- "C1_Thumb"
+    }
+  }
+}
+
+```
+
+### Random with Fancy Cuff
+
+
+```{r}
+
+for(i in 48:nrow(random_pattern)){
+  stitches <- sample(1:24, size = 12, replace = FALSE)
+  stitches2 <- sample(1:24, size = 7, replace = FALSE)
+  for(j in 1:length(stitches)){
+    if(random_pattern[i, stitches[j]] == "Blank"){
+      random_pattern[i, stitches[j]] <- "C3"
+    }
+    }
+  for(k in 1:length(stitches2)){
+    if(random_pattern[i, stitches[j]] == "Blank"){
+      random_pattern[i, stitches2[k]] <- "C4"
+    }
+  }
+}
+```
+
+```{r}
+random_chart_c <- chart_prep(random_pattern)
+```
+
+
+```{r}
+
+random_chart2_c <- chart_prep(random_pattern) %>%
+  mutate(col_num = abs(as.numeric(col_num)-24)) %>%
+  mutate(label = case_when(stitch == "K2TOG" ~ "\\\\", 
+                           stitch == "SSK" ~ "//",
+                           stitch %in% c("Blank_Thumb", "C1_Thumb") ~ "T"))
+  
+```
+
+
+```{r, fig.width = 4, fig.height = 8, fig.show="hold"}
+
+plot_chart(random_chart_c) +
+  labs(title = "Left Mitten")
+
+
+plot_chart(random_chart2_c) +
+  labs(title = "Right Mitten")
+
+```
+
+### Random Repeating
+
+```{r gen_rep_random_function}
+
+
+gen_rep_random <- function(template, st1, st2, st3, st4, st5, st6){
+
+for(i in 1:nrow(template)){
+  for(j in 1:ncol(template)){
+  if(i %in% seq(1, 47, by = 6) & j %in% c(st1, 24-st1) & template[i, j] == "Blank"){
+  template[i, j] <- "C1"
+  }
+  if(i %in% seq(1, 47, by = 6) & j %in% c(st4, 24-st4) & template[i, j] == "Blank"){
+  template[i, j] <- "C2"
+  }
+  if(i %in% seq(2, 47, by = 6) & j %in% c(st2, 24-st2-1) & template[i, j] == "Blank"){
+  template[i, j] <- "C1"
+  }
+  if(i %in% seq(2, 47, by = 6) & j %in% c(st5, 24-st5-1) & template[i, j] == "Blank"){
+  template[i, j] <- "C2"
+  }
+  if(i %in% seq(3, 47, by = 6) & j %in% c(st3, 24-st3-1) & template[i, j] == "Blank"){
+  template[i, j] <- "C1"
+  }
+  if(i %in% seq(3, 47, by = 6) & j %in% c(st6, 24-st6-1) & template[i, j] == "Blank"){
+  template[i, j] <- "C2"
+  }
+  if(i %in% seq(4, 47, by = 6) & j %in% c(st2, 24-st2-1) & template[i, j] == "Blank"){
+  template[i, j] <- "C1"
+  }
+  if(i %in% seq(3, 47, by = 6) & j %in% c(st5, 24-st5-1) & template[i, j] == "Blank"){
+  template[i, j] <- "C2"
+  }
+  if(i %in% seq(5, 47, by = 6) & j %in% c(st1, 24-st1-1) & template[i, j] == "Blank"){
+  template[i, j] <- "C1"
+  }
+  if(i %in% seq(3, 47, by = 6) & j %in% c(st4, 24-st4-1) & template[i, j] == "Blank"){
+  template[i, j] <- "C2"
+  }
+  }
+}
+  template
+}
+
+
+```
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(14)
+st1 <- sample(4:15, size = 6, replace = FALSE)
+st2 <- sample(4:15, size = 5, replace = FALSE)
+st3 <- sample(4:15, size = 4, replace = FALSE)
+st4 <- sample(4:15, size = 4, replace = FALSE)
+st5 <- sample(4:15, size = 7, replace = FALSE)
+st6 <- sample(4:15, size = 4, replace = FALSE)
+
+rep_random1 <- gen_rep_random(template = template, st1 = st1, st2 = st2, st3 = st3, st4 = st4, st5 = st5, st6 = st6)
+rep_random_chart <- chart_prep(rep_random1)
+plot_chart(rep_random_chart)                               
+```
+
+### Random Repeating 2
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(15)
+st1 <- sample(3:14, size = 6, replace = FALSE)
+st2 <- sample(3:14, size = 5, replace = FALSE)
+st3 <- sample(3:14, size = 4, replace = FALSE)
+st4 <- sample(3:14, size = 4, replace = FALSE)
+st5 <- sample(3:14, size = 7, replace = FALSE)
+st6 <- sample(3:14, size = 4, replace = FALSE)
+
+rep_random2 <- gen_rep_random(template = template, st1 = st1, st2 = st2, st3 = st3, st4 = st4, st5 = st5, st6 = st6)
+rep_random_chart2 <- chart_prep(rep_random2)
+plot_chart(rep_random_chart2)                               
+```
