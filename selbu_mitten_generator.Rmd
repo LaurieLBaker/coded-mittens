@@ -24,6 +24,7 @@ library(raster)
 library(kableExtra)
 library(DT)
 
+library(patchwork)
 library(magick)
 
 ```
@@ -349,43 +350,53 @@ plot_chart(random_chart2_c) +
 
 ```
 
-### Random Repeating
+## Random repeating
+
 
 ```{r gen_rep_random_function}
 
 
-gen_rep_random <- function(template, st1, st2, st3, st4, st5, st6){
+gen_rep_random <- function(template){
 
+st1 <- sample(4:15, size = 5, replace = FALSE)
+st2 <- sample(4:15, size = 4, replace = FALSE)
+st3 <- sample(4:15, size = 6, replace = FALSE)
+st4 <- sample(4:15, size = 4, replace = FALSE)
+st5 <- sample(4:15, size = 5, replace = FALSE)
+st6 <- sample(4:15, size = 4, replace = FALSE)
+
+  
+  
 for(i in 1:nrow(template)){
   for(j in 1:ncol(template)){
-  if(i %in% seq(1, 47, by = 6) & j %in% c(st1, 24-st1) & template[i, j] == "Blank"){
+  if(i %in% seq(1, 47, by = 6) & j %in% c(st1, 21-st1) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
-  if(i %in% seq(1, 47, by = 6) & j %in% c(st4, 24-st4) & template[i, j] == "Blank"){
+  if(i %in% seq(1, 47, by = 6) & j %in% c(st4, 21-st4) & template[i, j] == "Blank"){
   template[i, j] <- "C3"
   }
-  if(i %in% seq(2, 47, by = 6) & j %in% c(st2, 24-st2-1) & template[i, j] == "Blank"){
+  if(i %in% seq(2, 47, by = 6) & j %in% c(st2, 21-st2) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
-  if(i %in% seq(2, 47, by = 6) & j %in% c(st5, 24-st5-1) & template[i, j] == "Blank"){
+  if(i %in% seq(2, 47, by = 6) & j %in% c(st5, 21-st5) & template[i, j] == "Blank"){
   template[i, j] <- "C3"
   }
-  if(i %in% seq(3, 47, by = 6) & j %in% c(st3, 24-st3-1) & template[i, j] == "Blank"){
+  if(i %in% seq(3, 47, by = 6) & j %in% c(st3, 21-st3) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
-  if(i %in% seq(3, 47, by = 6) & j %in% c(st6, 24-st6-1) & template[i, j] == "Blank"){
+  if(i %in% seq(3, 47, by = 6) & j %in% c(st6, 21-st6) & template[i, j] == "Blank"){
   template[i, j] <- "C3"
   }
-  if(i %in% seq(4, 47, by = 6) & j %in% c(st2, 24-st2-1) & template[i, j] == "Blank"){
+  if(i %in% seq(4, 47, by = 6) & j %in% c(st2, 21-st2) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
-  if(i %in% seq(3, 47, by = 6) & j %in% c(st5, 24-st5-1) & template[i, j] == "Blank"){
+  if(i %in% seq(3, 47, by = 6) & j %in% c(st5, 21-st5) & template[i, j] == "Blank"){
   template[i, j] <- "C3"
   }
-  if(i %in% seq(5, 47, by = 6) & j %in% c(st1, 24-st1-1) & template[i, j] == "Blank"){
+  if(i %in% seq(5, 47, by = 6) & j %in% c(st1, 21-st1) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
-  if(i %in% seq(3, 47, by = 6) & j %in% c(st4, 24-st4-1) & template[i, j] == "Blank"){
+  if(i %in% seq(3, 47, by = 6) & j %in% c(st4, 21-st4) & template[i, j] == "Blank"){
   template[i, j] <- "C3"
   }
   }
@@ -399,32 +410,84 @@ for(i in 1:nrow(template)){
 ```{r fig.width = 4, fig.height = 8, fig.show="hold"}
 
 set.seed(14)
-st1 <- sample(4:15, size = 6, replace = FALSE)
-st2 <- sample(4:15, size = 5, replace = FALSE)
-st3 <- sample(4:15, size = 4, replace = FALSE)
-st4 <- sample(4:15, size = 4, replace = FALSE)
-st5 <- sample(4:15, size = 7, replace = FALSE)
-st6 <- sample(4:15, size = 4, replace = FALSE)
 
-rep_random1 <- gen_rep_random(template = template, st1 = st1, st2 = st2, st3 = st3, st4 = st4, st5 = st5, st6 = st6)
+rep_random1 <- gen_rep_random(template = template)
 rep_random_chart <- chart_prep(rep_random1)
-plot_chart(rep_random_chart)                               
+p1 <- plot_chart(rep_random_chart)                               
 ```
-
-### Random Repeating 2
 
 ```{r fig.width = 4, fig.height = 8, fig.show="hold"}
 
 set.seed(15)
-st1 <- sample(3:14, size = 6, replace = FALSE)
-st2 <- sample(3:14, size = 5, replace = FALSE)
-st3 <- sample(3:14, size = 4, replace = FALSE)
-st4 <- sample(3:14, size = 4, replace = FALSE)
-st5 <- sample(3:14, size = 2, replace = FALSE)
-st6 <- sample(3:14, size = 4, replace = FALSE)
-
-rep_random2 <- gen_rep_random(template = template, st1 = st1, st2 = st2, st3 = st3, st4 = st4, st5 = st5, st6 = st6)
+rep_random2 <- gen_rep_random(template = template)
 
 rep_random_chart2 <- chart_prep(rep_random2)
-plot_chart(rep_random_chart2)                               
+p2 <- plot_chart(rep_random_chart2)                               
 ```
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(16)
+
+rep_random3 <- gen_rep_random(template = template)
+
+rep_random_chart3 <- chart_prep(rep_random3)
+p3 <- plot_chart(rep_random_chart3)                               
+```
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(17)
+
+rep_random4 <- gen_rep_random(template = template)
+
+rep_random_chart4 <- chart_prep(rep_random4)
+p4 <- plot_chart(rep_random_chart4)                               
+```
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(18)
+
+rep_random5 <- gen_rep_random(template = template)
+
+rep_random_chart5 <- chart_prep(rep_random5)
+p5 <- plot_chart(rep_random_chart5)                               
+```
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(19)
+
+rep_random6 <- gen_rep_random(template = template)
+
+rep_random_chart6 <- chart_prep(rep_random6)
+p6 <- plot_chart(rep_random_chart6)                               
+```
+
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(20)
+
+rep_random7 <- gen_rep_random(template = template)
+
+rep_random_chart7 <- chart_prep(rep_random7)
+p7 <- plot_chart(rep_random_chart7)                               
+```
+
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(21)
+
+rep_random8 <- gen_rep_random(template = template)
+
+rep_random_chart8 <- chart_prep(rep_random8)
+p8 <- plot_chart(rep_random_chart8)                               
+```
+
+```{r, fig.height=32, fig.width = 8}
+p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + plot_layout(ncol = 2)
+```
+
