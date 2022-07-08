@@ -99,9 +99,10 @@ pattern %>%
                            stitch == "K2TOG" ~ "#FFFFFF",
                            stitch == "SSK" ~ "#FFFFFF",
                            stitch %in% c("Blank") ~ "#FFFFFF",
-                           stitch %in% c("C1", "C1_Thumb") ~ "#FFFFFF",
-                           stitch == "C2" ~ "#30D5C8",
-                           stitch %in% c("C3") ~ "#30D5C8",                                                stitch %in% c("C3") ~ "#FCE205",
+                                              stitch %in% c("MC") ~ "#FFFFFF",
+                           stitch %in% c("C1", "C1_Thumb") ~ "#1f7d6d",
+                           stitch == "C2" ~ "#1f7d6d",
+                           stitch %in% c("C3") ~ "#f0b124",                                             
                            stitch %in% c("C4") ~ "#0000FF",
                            stitch %in% c("C5") ~ "#0000FF",
 
@@ -361,31 +362,31 @@ for(i in 1:nrow(template)){
   template[i, j] <- "C1"
   }
   if(i %in% seq(1, 47, by = 6) & j %in% c(st4, 24-st4) & template[i, j] == "Blank"){
-  template[i, j] <- "C2"
+  template[i, j] <- "C3"
   }
   if(i %in% seq(2, 47, by = 6) & j %in% c(st2, 24-st2-1) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
   if(i %in% seq(2, 47, by = 6) & j %in% c(st5, 24-st5-1) & template[i, j] == "Blank"){
-  template[i, j] <- "C2"
+  template[i, j] <- "C3"
   }
   if(i %in% seq(3, 47, by = 6) & j %in% c(st3, 24-st3-1) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
   if(i %in% seq(3, 47, by = 6) & j %in% c(st6, 24-st6-1) & template[i, j] == "Blank"){
-  template[i, j] <- "C2"
+  template[i, j] <- "C3"
   }
   if(i %in% seq(4, 47, by = 6) & j %in% c(st2, 24-st2-1) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
   if(i %in% seq(3, 47, by = 6) & j %in% c(st5, 24-st5-1) & template[i, j] == "Blank"){
-  template[i, j] <- "C2"
+  template[i, j] <- "C3"
   }
   if(i %in% seq(5, 47, by = 6) & j %in% c(st1, 24-st1-1) & template[i, j] == "Blank"){
   template[i, j] <- "C1"
   }
   if(i %in% seq(3, 47, by = 6) & j %in% c(st4, 24-st4-1) & template[i, j] == "Blank"){
-  template[i, j] <- "C2"
+  template[i, j] <- "C3"
   }
   }
 }
@@ -419,10 +420,11 @@ st1 <- sample(3:14, size = 6, replace = FALSE)
 st2 <- sample(3:14, size = 5, replace = FALSE)
 st3 <- sample(3:14, size = 4, replace = FALSE)
 st4 <- sample(3:14, size = 4, replace = FALSE)
-st5 <- sample(3:14, size = 7, replace = FALSE)
+st5 <- sample(3:14, size = 2, replace = FALSE)
 st6 <- sample(3:14, size = 4, replace = FALSE)
 
 rep_random2 <- gen_rep_random(template = template, st1 = st1, st2 = st2, st3 = st3, st4 = st4, st5 = st5, st6 = st6)
+
 rep_random_chart2 <- chart_prep(rep_random2)
 plot_chart(rep_random_chart2)                               
 ```
