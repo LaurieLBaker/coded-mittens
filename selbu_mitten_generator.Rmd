@@ -358,12 +358,12 @@ plot_chart(random_chart2_c) +
 
 gen_rep_random <- function(template){
 
-st1 <- sample(4:15, size = 5, replace = FALSE)
-st2 <- sample(4:15, size = 4, replace = FALSE)
-st3 <- sample(4:15, size = 6, replace = FALSE)
-st4 <- sample(4:15, size = 4, replace = FALSE)
-st5 <- sample(4:15, size = 5, replace = FALSE)
-st6 <- sample(4:15, size = 4, replace = FALSE)
+st1 <- sample(1:10, size = 5, replace = FALSE)
+st2 <- sample(1:10, size = 4, replace = FALSE)
+st3 <- sample(1:10, size = 6, replace = FALSE)
+st4 <- sample(1:10, size = 4, replace = FALSE)
+st5 <- sample(1:10, size = 5, replace = FALSE)
+st6 <- sample(1:10, size = 4, replace = FALSE)
 
   
   
@@ -413,7 +413,8 @@ set.seed(14)
 
 rep_random1 <- gen_rep_random(template = template)
 rep_random_chart <- chart_prep(rep_random1)
-p1 <- plot_chart(rep_random_chart)                               
+p1 <- plot_chart(rep_random_chart) +
+  labs(title = "Seed 14")                           
 ```
 
 ```{r fig.width = 4, fig.height = 8, fig.show="hold"}
@@ -422,7 +423,8 @@ set.seed(15)
 rep_random2 <- gen_rep_random(template = template)
 
 rep_random_chart2 <- chart_prep(rep_random2)
-p2 <- plot_chart(rep_random_chart2)                               
+p2 <- plot_chart(rep_random_chart2) +
+  labs(title = "Seed 15")                                   
 ```
 
 ```{r fig.width = 4, fig.height = 8, fig.show="hold"}
@@ -432,7 +434,8 @@ set.seed(16)
 rep_random3 <- gen_rep_random(template = template)
 
 rep_random_chart3 <- chart_prep(rep_random3)
-p3 <- plot_chart(rep_random_chart3)                               
+p3 <- plot_chart(rep_random_chart3) +
+  labs(title = "Seed 16")                                 
 ```
 
 ```{r fig.width = 4, fig.height = 8, fig.show="hold"}
@@ -442,7 +445,8 @@ set.seed(17)
 rep_random4 <- gen_rep_random(template = template)
 
 rep_random_chart4 <- chart_prep(rep_random4)
-p4 <- plot_chart(rep_random_chart4)                               
+p4 <- plot_chart(rep_random_chart4) +
+  labs(title = "Seed 17")                                    
 ```
 
 ```{r fig.width = 4, fig.height = 8, fig.show="hold"}
@@ -452,7 +456,8 @@ set.seed(18)
 rep_random5 <- gen_rep_random(template = template)
 
 rep_random_chart5 <- chart_prep(rep_random5)
-p5 <- plot_chart(rep_random_chart5)                               
+p5 <- plot_chart(rep_random_chart5) +
+  labs(title = "Seed 18")                                
 ```
 
 ```{r fig.width = 4, fig.height = 8, fig.show="hold"}
@@ -462,7 +467,8 @@ set.seed(19)
 rep_random6 <- gen_rep_random(template = template)
 
 rep_random_chart6 <- chart_prep(rep_random6)
-p6 <- plot_chart(rep_random_chart6)                               
+p6 <- plot_chart(rep_random_chart6) +
+  labs(title = "Seed 19")                                  
 ```
 
 
@@ -473,7 +479,8 @@ set.seed(20)
 rep_random7 <- gen_rep_random(template = template)
 
 rep_random_chart7 <- chart_prep(rep_random7)
-p7 <- plot_chart(rep_random_chart7)                               
+p7 <- plot_chart(rep_random_chart7) +
+  labs(title = "Seed 20")                                    
 ```
 
 
@@ -484,10 +491,139 @@ set.seed(21)
 rep_random8 <- gen_rep_random(template = template)
 
 rep_random_chart8 <- chart_prep(rep_random8)
-p8 <- plot_chart(rep_random_chart8)                               
+p8 <- plot_chart(rep_random_chart8) +
+  labs(title = "Seed 21")                                    
 ```
+
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(22)
+
+rep_random9 <- gen_rep_random(template = template)
+
+rep_random_chart9 <- chart_prep(rep_random9)
+p9 <- plot_chart(rep_random_chart9) +
+  labs(title = "Seed 22")                                    
+```
+
+
+```{r fig.width = 4, fig.height = 8, fig.show="hold"}
+
+set.seed(23)
+
+rep_random10 <- gen_rep_random(template = template)
+
+rep_random_chart10 <- chart_prep(rep_random10)
+p10 <- plot_chart(rep_random_chart10) +
+  labs(title = "Seed 23")                                    
+```
+
 
 ```{r, fig.height=32, fig.width = 8}
-p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + plot_layout(ncol = 2)
+p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + plot_layout(ncol = 2)
 ```
 
+## Swatch patterns 2
+
+
+```{r create_swatch}
+
+create_swatch <- function(rows, stitches){
+  swatch <- as.data.frame(matrix("C1", ncol = stitches, nrow = rows))
+  swatch
+}
+
+```
+
+
+```{r}
+
+swatch_gen <- function(swatch, seed){
+
+set.seed(seed)
+  
+st1 <- sample(1:ncol(swatch), size = sample(1:ncol(swatch)-1, size = 2), replace = FALSE)
+st2 <- sample(1:ncol(swatch), size = sample(1:ncol(swatch)-1, size = 2), replace = FALSE)
+st3 <- sample(1:ncol(swatch), size = sample(1:ncol(swatch)-1, size = 2), replace = FALSE)
+col <- c("C2", "C3", "C4")
+
+for(i in 1:nrow(swatch)){
+  for(j in 1:ncol(swatch)){
+    if(i %in% seq(1, ncol(swatch), by = 3) & j %in% st1){
+      col_index <- sample(1:3, size = 1)
+      swatch[i, j] <- col[col_index]
+      }
+    if(i %in% seq(2, ncol(swatch), by = 3) & j %in% st2){
+      col_index <- sample(1:3, size = 1)
+      swatch[i, j] <- col[col_index]
+      }
+    if(i %in% seq(3, ncol(swatch), by = 3) & j %in% st3){
+      col_index <- sample(1:3, size = 1)
+      swatch[i, j]  <- col[col_index]
+    }
+  }
+}
+  swatch
+}
+
+```
+
+```{r}
+
+
+swatch_prep <- function(swatch){
+swatch %>%
+  mutate(row_num = nrow(swatch):1, .before = "V1") %>%
+  pivot_longer(cols = !row_num, names_to = "col_num", values_to = "stitch") %>%
+  mutate(col_num = substr(col_num, 2, ncol(swatch))) %>%
+  mutate(color = case_when(                   stitch == "C1" ~ "#1f7d6d",
+      stitch == "C2" ~ "#f0b124",             stitch == "C3" ~ "#40567b",             stitch == "C4" ~ "#40567b"))
+}
+
+plot_swatch <- function(chart){
+ggplot(chart, aes(y = as.numeric(row_num), x = as.numeric(col_num),)) +
+  geom_tile(aes(fill = color), alpha = 0.7, color = "black") +
+  labs(y = "Row",
+       x = " ") +
+  scale_y_continuous(breaks = chart$row_num, labels = as.character(chart$row_num), position = "right") +
+  geom_text(aes(label = stitch),
+            label.size = 0.1) +
+    scale_fill_identity()
+}
+```
+
+```{r}
+my_swatch <- create_swatch(rows = 4, stitches = 3)
+my_swatch2 <- swatch_gen(my_swatch, seed = 7)
+my_swatch3 <- swatch_prep(my_swatch2)
+(my_swatch4 <- plot_swatch(my_swatch3))
+
+par(mfrow=c(2,2))
+
+swatch_creator <- function(rows, stitches, seed){
+my_swatch <- create_swatch(rows = rows, stitches = stitches)
+my_swatch2 <- swatch_gen(my_swatch, seed = seed)
+my_swatch3 <- swatch_prep(my_swatch2)
+my_swatch4 <- plot_swatch(my_swatch3)
+my_swatch4
+}
+
+s1 <- swatch_creator(rows = 3, stitches = 3, seed = 1)
+s2 <- swatch_creator(rows = 3, stitches = 3, seed = 2)
+s3 <- swatch_creator(rows = 3, stitches = 3, seed = 3)
+s4 <- swatch_creator(rows = 3, stitches = 3, seed = 4)
+s5 <- swatch_creator(rows = 3, stitches = 3, seed = 5)
+s6 <- swatch_creator(rows = 3, stitches = 3, seed = 6)
+
+s1 + s2 + s3 + s4 + s5 + s6 + plot_layout(ncol = 2)
+```
+
+
+## Swatch patterns 3
+
+## Swatch patterns 4
+
+## Swatch patterns 5
+
+## Swatch patterns 6
