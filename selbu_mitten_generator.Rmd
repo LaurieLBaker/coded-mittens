@@ -1,7 +1,7 @@
 ---
-title: "Not Your Grandma's Selbu Mittens"
+title: "Coded Mittens"
 author: "Laurie Baker"
-date: "7/3/2022"
+date: "6/15/2022"
 output:
   html_document:
     self_contained: FALSE
@@ -616,7 +616,7 @@ s4 <- swatch_creator(rows = 3, stitches = 3, seed = 4)
 s5 <- swatch_creator(rows = 3, stitches = 3, seed = 5)
 s6 <- swatch_creator(rows = 3, stitches = 3, seed = 6)
 
-s1 + s2 + s3 + s4 + s5 + s6 + plot_layout(ncol = 2)
+s1 + s2 + s3 + s4 + s5 + s6 + plot_layout(ncol = 3)
 ```
 
 
