@@ -217,7 +217,21 @@ new_pattern %>%
 
 ```
 
+## CA Generator
 
+```{r}
+
+rule <- 30L #set rule number to integer between 0 and 255 inclusive
+
+#create dict for rule based on binary representation
+
+ruleMap <- vector(mode = "integer", length = 8L)
+
+for (i in 0:7){
+  ruleMap[i+1] <- rule%/%(2^i) %% 2
+}
+
+```
 
 ## How did we do it?
 
