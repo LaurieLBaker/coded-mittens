@@ -141,6 +141,32 @@ template %>%
 
 ```
 
+### Cellular Automaton Rule 40
+
+```{r}
+
+rule40 <- read_csv("cellular_automaton/mitten_rule-40.csv")
+rule40_pattern <- chart_prep(pattern = rule40)
+
+
+```
+
+```{r, fig.width = 7, fig.height = 14}
+
+plot_chart(chart = rule40_pattern) +
+  scale_fill_identity(guide = "legend", labels = c("None", "Contrast Color", "Main Color", "K2Tog or SSK"), 
+                       name = "Stitch Guide")
+```
+
+### Rule 40 Dataset
+
+```{r}
+
+rule40 %>%
+  kbl() %>%
+  kable_styling()
+
+```
 
 ### Pattern 1
 
@@ -180,7 +206,6 @@ plot_chart(new_chart) +
                        name = "Stitch Guide")
 
 ```
-
 
 ### Pattern 1 Dataset
 
