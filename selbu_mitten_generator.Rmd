@@ -217,22 +217,6 @@ new_pattern %>%
 
 ```
 
-## CA Generator
-
-```{r}
-
-rule <- 30L #set rule number to integer between 0 and 255 inclusive
-
-#create dict for rule based on binary representation
-
-ruleMap <- vector(mode = "integer", length = 8L)
-
-for (i in 0:7){
-  ruleMap[i+1] <- rule%/%(2^i) %% 2
-}
-
-```
-
 ## How did we do it?
 
 To generate the pattern, we set up a looping structure to go row by row and stitch by stitch, just like you'd knit!
@@ -263,6 +247,117 @@ for(i in 1:nrow(template)){
   }
 }
 
+```
+
+## CA Generator
+
+```{r CA Rule}
+
+CA_rule <- 73L #set rule number to integer between 0 and 255 inclusive
+
+#create a map from the hat value to {0,1} according to the rule number
+
+ruleMap <- function(hat, rule){
+  ca_output <- rule%/%(2^hat) %% 2
+  return(ca_output)
+}
+
+```
+
+```{r CA iterate tempmlate}
+
+iter_template <- function(pattern){
+  
+  p_cols <- ncol(pattern) - 3 #assumes thumb has three stitches
+  p_rows <- nrow(pattern) - 7 #not considering cuff in the pattern for ca purposes
+  pattern_nt <- pattern[ , 1:p_cols] 
+  
+  #add dummy columns so CA algorithm is not bounded by pattern
+  dummyct <- p_rows - (p_cols+1)/2
+  pattern_nt <- bind_cols(matrix("0", nrow(pattern_nt), dummyct), pattern_nt, matrix("0", nrow(pattern_nt), dummyct))
+  a_cols <- ncol(pattern_nt)
+  
+  #Constructing the transition matrix
+  A <- 2 * diag(a_cols)
+  A[1:(a_cols-1), ] <- A[1:(a_cols-1), ] + 1*diag(a_cols)[2:a_cols, ]
+  A[2:a_cols, ] <- A[2:a_cols, ] + 4*diag(a_cols)[1:(a_cols-1), ]
+
+  pattern_nt[1, (pattern_nt[1,]=="Blank")[1,]] <- "C1"
+  
+  #Iterate over body of matrix based on values of row above. Ignore last 7 rows for cuff
+  for(i in 2:p_rows){
+    ca_out <- A %*% (pattern_nt[(i-1),]=="C1")[1,]
+    element_convert <- as.logical(map2(ca_out, CA_rule, ruleMap))
+    pattern_nt[i,element_convert] <- "C1"
+  }
+  
+  pattern_nt <- pattern_nt[, (dummyct+1):(dummyct+p_cols)]
+  #Mark original thumb locations that were converted to C1 in previous step
+  pattern_nt[array(as.logical((pattern_nt[]=="C1")*(pattern[, 1:p_cols]=="Blank Thumb")),dim(pattern_nt))] <- "C1_Thumb"
+  pattern_nt[array(as.logical((pattern_nt[]=="C1")*(pattern[, 1:p_cols]=="K2TOG")),dim(pattern_nt))] <- "K2TOG"
+  pattern_nt[array(as.logical((pattern_nt[]=="C1")*(pattern[, 1:p_cols]=="SSK")),dim(pattern_nt))] <- "SSK"
+  pattern_nt[array(as.logical((pattern_nt[]=="C1")*(pattern[, 1:p_cols]=="None")),dim(pattern_nt))] <- "None"
+  
+  pattern[, 1:p_cols] <- pattern_nt[]
+  
+  #Making the cuff
+  pattern[nrow(pattern)-6, ] <- "Blank"
+  pattern[nrow(pattern)-c(5,0), ] <- "C1"
+  pattern[nrow(pattern)-c(4,1), ] <- "C3"
+  
+  hat_logi <- as.logical(rep(0, times=24))
+  for(i in 1:24){
+    hat_logi[i] <- as.logical(ruleMap(((24-i) %% 3), ((24-i) %/% 3)))
+  }
+  pattern[nrow(pattern)-3, hat_logi] <- "C1"
+  
+  rule_logi <- as.logical(rep(0, times=24))
+  for(i in 0:7){
+    rule_logi[(24-3*i)-1] <- as.logical(ruleMap(i, CA_rule))
+  }
+  pattern[nrow(pattern)-2, rule_logi] <- "C1"
+  pattern[nrow(pattern)-2, as.logical(rep(c(1,0,1),times=8))] <- "C3"
+  
+  return(pattern)
+}
+
+```
+
+```{r ca_iterate test}
+  hat_logi <- rep(0, times=24)
+  for(i in 1:24){
+    hat_logi[i] <- as.logical(ruleMap(((24-i) %% 3), ((24-i) %/% 3)))
+  }
+  
+  rule_logi <- rep(0, times=24)
+  for(j in 0:7){
+    rule_logi[(24-3*j)-1] <- ruleMap(j, CA_rule)
+  }
+```
+
+```{r}
+
+f <- function(i, j){
+  result <- j%/%(2^i) %% 2
+  return(result)
+}
+m <- matrix(0, 3, 8)
+
+for(i in 1:nrow(m)){
+  for(j in 1:ncol(m)){
+    m[i,j] <- ruleMap(3-i,8-j)
+  }
+}
+
+```
+
+```{r Plot CA Pattern, fig.width = 8, fig.height = 16}
+ca_pattern <- iter_template(template)
+
+ca_chart <- chart_prep(ca_pattern)
+
+plot_chart(ca_chart) + scale_fill_identity(guide = "legend", labels = c("None", "Contrast Color", "Main Color", "K2Tog or SSK"), 
+                       name = "Stitch Guide")
 ```
 
 ## Generating a random knitting pattern {.tabset}
