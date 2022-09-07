@@ -323,34 +323,6 @@ iter_template <- function(pattern){
 
 ```
 
-```{r ca_iterate test}
-  hat_logi <- rep(0, times=24)
-  for(i in 1:24){
-    hat_logi[i] <- as.logical(ruleMap(((24-i) %% 3), ((24-i) %/% 3)))
-  }
-  
-  rule_logi <- rep(0, times=24)
-  for(j in 0:7){
-    rule_logi[(24-3*j)-1] <- ruleMap(j, CA_rule)
-  }
-```
-
-```{r}
-
-f <- function(i, j){
-  result <- j%/%(2^i) %% 2
-  return(result)
-}
-m <- matrix(0, 3, 8)
-
-for(i in 1:nrow(m)){
-  for(j in 1:ncol(m)){
-    m[i,j] <- ruleMap(3-i,8-j)
-  }
-}
-
-```
-
 ```{r Plot CA Pattern, fig.width = 8, fig.height = 16}
 ca_pattern <- iter_template(template)
 
