@@ -253,7 +253,7 @@ for(i in 1:nrow(template)){
 
 ```{r CA Rule}
 
-CA_rule <- 73L #set rule number to integer between 0 and 255 inclusive
+CA_rule <- 73 #set rule number to integer between 0 and 255 inclusive
 
 #create a map from the hat value to {0,1} according to the rule number
 
@@ -264,7 +264,7 @@ ruleMap <- function(hat, rule){
 
 ```
 
-```{r CA iterate tempmlate}
+```{r CA iterate template}
 
 iter_template <- function(pattern){
   
