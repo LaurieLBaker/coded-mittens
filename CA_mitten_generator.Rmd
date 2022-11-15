@@ -23,9 +23,8 @@ library(tidyverse)
 library(raster)
 library(kableExtra)
 library(DT)
-
 library(patchwork)
-#library(magick)
+library(magick)
 
 ```
 
